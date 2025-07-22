@@ -13,6 +13,8 @@ private:
     void WriteResponse();
     //处理请求
     void HandleReq();
+    //解析键值对
+    void PreParseGetParam();
     tcp::socket  _socket;
     // _buffer 用来接受数据
     beast::flat_buffer  _buffer{ 8192 };
@@ -26,4 +28,7 @@ private:
     // _deadline 用来做定时器判断请求是否超时
     net::steady_timer deadline_{
         _socket.get_executor(), std::chrono::seconds(60) };
+    
+    std::string _get_url;
+    std::unordered_map<std::string, std::string> _get_params;
 };
