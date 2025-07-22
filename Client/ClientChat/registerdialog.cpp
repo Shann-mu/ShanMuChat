@@ -28,7 +28,13 @@ void RegisterDialog::on_get_code_clicked()
     QRegularExpression regex(R"((\w+)(\.|_)?(\w*)@(\w+)(\.(\w+))+)");
     bool match = regex.match(email).hasMatch();
     if(match){
+        //qDebug("准备发送http验证码");
         //发送http验证码
+        QJsonObject json_obj;
+        json_obj["email"] = email;
+        HttpMgr::GetInstance()->PostHttpReq(QUrl(gate_url_prefix+"/get_varifycode"),
+                                            json_obj,ReqId::ID_GET_VARIFY_CODE,Modules::REGISTERMOD);
+
     }else{
         showTip(tr("邮箱地址不正确"),false);
     }
@@ -36,6 +42,7 @@ void RegisterDialog::on_get_code_clicked()
 
 void RegisterDialog::slot_reg_mod_finish(ReqId id, QString res, ErrorCode err)
 {
+    qDebug() << "Raw response:" << res;
     if(err != ErrorCode::SUCCESS){
         showTip(tr("网络请求错误"),false);
         return;
@@ -44,11 +51,14 @@ void RegisterDialog::slot_reg_mod_finish(ReqId id, QString res, ErrorCode err)
 
     QJsonDocument jsonDoc = QJsonDocument::fromJson(res.toUtf8());
     if(jsonDoc.isNull()){
+        qDebug("josnDoc.isNull错误");
+
         showTip(tr("json解析失败"),false);
         return;
     }
     //json解析错误
-    if(jsonDoc.isObject()){
+    if(!jsonDoc.isObject()){
+        qDebug("josnDoc.isObject错误");
         showTip(tr("json解析失败"),false);
         return;
     }
