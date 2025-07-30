@@ -17,6 +17,7 @@ RedisConPool::RedisConPool(size_t poolSize, const char* host, int port, const ch
         if (reply->type == REDIS_REPLY_ERROR) {
             std::cout << "ÈÏÖ¤Ê§°Ü" << std::endl;
             freeReplyObject(reply);
+            redisFree(context);
             continue;
         }
 
@@ -31,7 +32,7 @@ RedisConPool::~RedisConPool()
     std::lock_guard<std::mutex> lock(mutex_);
     while (!connections_.empty()) {
         connections_.pop();
-
+       
     }
 }
 
@@ -83,6 +84,7 @@ RedisMgr::~RedisMgr()
     Close();
 }
 
+
 bool RedisMgr::Get(const std::string& key, std::string& value)
 {
     auto connect = _con_pool->getConnection();
@@ -93,12 +95,14 @@ bool RedisMgr::Get(const std::string& key, std::string& value)
     if (reply == NULL) {
         std::cout << "[ GET " << key << " ] failed " << std::endl;
         freeReplyObject(reply);
+        _con_pool->returnConnection(connect);
         return false;
     }
 
     if (reply->type != REDIS_REPLY_STRING) {
         std::cout << "[ GET " << key << " ] failed" << std::endl;
         freeReplyObject(reply);
+        _con_pool->returnConnection(connect);
         return false;
     }
 
@@ -106,6 +110,7 @@ bool RedisMgr::Get(const std::string& key, std::string& value)
     freeReplyObject(reply);
 
     std::cout << "success to execute command [ GET " << key << " ]" << std::endl;
+    _con_pool->returnConnection(connect);
     return true;
 }
 

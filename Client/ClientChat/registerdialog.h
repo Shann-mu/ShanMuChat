@@ -19,6 +19,8 @@ private slots:
     void on_get_code_clicked();
     void slot_reg_mod_finish(ReqId id, QString res, ErrorCode err);
 
+    void on_sure_btn_clicked();
+
 private:
     Ui::RegisterDialog *ui;
     void showTip(QString str, bool b_ok);
