@@ -1,5 +1,11 @@
 #pragma once
 #include "const.h"
+#include <fstream>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/ini_parser.hpp>
+#include <boost/filesystem.hpp>
+#include <map>
+#include<iostream>
 struct SectionInfo {
 	SectionInfo() {}
 	~SectionInfo() { _section_datas.clear(); }

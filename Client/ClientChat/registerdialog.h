@@ -21,11 +21,31 @@ private slots:
 
     void on_sure_btn_clicked();
 
+    void on_return_btn_clicked();
+
 private:
     Ui::RegisterDialog *ui;
     void showTip(QString str, bool b_ok);
     void initHttpHandler();
+    bool checkUserValid();
+    void AddTipErr(TipErr te, QString tips);
+    void DelTipErr(TipErr te);
+    bool checkEmailValid();
+    bool checkPassValid();
+    bool checkVarifyValid();
+    bool  checkConfirmValid();
+    void ChangeTipPage();
+    QMap<TipErr, QString> _tip_errs;
+
     QMap<ReqId,std::function<void(const QJsonObject&)>> _handlers;
+
+    QTimer * _countdown_timer;
+    int _countdown;
+
+
+
+signals:
+    void sigSwitchLogin();
 };
 
 #endif // REGISTERDIALOG_H
