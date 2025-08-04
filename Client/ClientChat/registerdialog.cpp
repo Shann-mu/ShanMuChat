@@ -84,6 +84,7 @@ connect(_countdown_timer, &QTimer::timeout, [this](){
 
 RegisterDialog::~RegisterDialog()
 {
+    qDebug()<<"destruct RegDlg";
     delete ui;
 }
 
@@ -337,6 +338,12 @@ void RegisterDialog::on_sure_btn_clicked()
     json_obj["varifycode"] = ui->varify_edit->text();
     HttpMgr::GetInstance()->PostHttpReq(QUrl(gate_url_prefix+"/user_register"),
                                         json_obj, ReqId::ID_REG_USER,Modules::REGISTERMOD);
+}
+
+void RegisterDialog::on_cancel_btn_clicked()
+{
+    _countdown_timer->stop();
+    emit sigSwitchLogin();
 }
 
 
